@@ -1,41 +1,28 @@
 <template>
-  <div>
-    <div>Bot昵称：{{ bot_name }}</div>
-    <div>Bot战力：{{ bot_rating }}</div>
-  </div>
-  <router-view/>
+  <NavBar />
+  <!-- 会自动根据网址来变，变化方式在router/index.js中定义 -->
+  
+  <router-view></router-view>
 </template>
 
 <script>
-import $ from 'jquery';
-import { ref } from 'vue';
+  /* 导入组件 */ 
+import NavBar from '@/components/NavBar.vue'
+import "bootstrap/dist/css/bootstrap.min.css"
+import "bootstrap/dist/js/bootstrap"
 
 export default {
-  name: "App",
-  setup: () => {
-    let bot_name = ref("");
-    let bot_rating = ref("");
-
-    $.ajax({
-      url: "http://127.0.0.1:3000/pk/getbotinfo/",
-      type: "get",
-      success: resp => {
-        bot_name.value = resp.name;
-        bot_rating.value = resp.rating;
-      }
-    });
-
-    return {
-      bot_name,
-      bot_rating
-    }
+  /* 想用组件的话就把它放到一个关键字components里 */ 
+  components: {
+    NavBar
   }
 }
 </script>
 
 <style>
 body {
- background-image: url("@/assets/dragon_background.jpg");
- background-size: cover;
+  /* 这里@是定义为src目录 */ 
+  background-image: url("@/assets/images/dragon_background.jpg");
+  background-size: cover;
 }
 </style>
