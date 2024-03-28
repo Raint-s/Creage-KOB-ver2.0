@@ -4,6 +4,8 @@ import RecordIndexView from '@/views/record/RecordIndexView'
 import RanklistIndexView from '@/views/ranklist/RanklistIndexView'
 import UserBotIndexView from '@/views/user/bot/UserBotIndexView'
 import NotFound from '@/views/error/NotFound'
+import UserAccountLoginView from '@/views/user/account/UserAccountLoginView'
+import UserAccountRegisterView from '@/views/user/account/UserAccountRegisterView'
 
 // 定义路径：定义某个路径的时候是写一个对象，第一个是定义路径path映射，然后component是路径对应的哪个组件
 const routes = [
@@ -35,6 +37,16 @@ const routes = [
     path: "/user/bot/",
     name: "user_bot_index",
     component: UserBotIndexView,
+  },
+  {
+    path: "/user/account/login/",
+    name: "user_account_login",
+    component: UserAccountLoginView,
+  },
+  {
+    path: "/user/account/register/",
+    name: "user_account_register",
+    component: UserAccountRegisterView,
   },
   {
     path: "/404/",

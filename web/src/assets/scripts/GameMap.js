@@ -167,10 +167,9 @@ export class GameMap extends AcGameObject {
 
     update() {
         this.update_size();
-        /*
         if(this.check_ready()){
             this.next_turn();
-        }*/
+        }
         this.render();
     }
 
