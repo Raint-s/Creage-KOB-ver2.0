@@ -1,5 +1,5 @@
 <template>
-    <ContentField>
+    <ContentField v-if="!$store.state.user.pulling_info">
         <!-- 添加了居中justify-content-md-center -->
         <div class="row justify-content-md-center">
             <div class="col-3">
@@ -42,6 +42,27 @@ export default {
         let password = ref('');
         let error_message = ref('');
 
+        // 重新键入页面先判断本地有无token，如果不存在会返回空
+        const jwt_token = localStorage.getItem("jwt_token");
+        // 如若存在就将其存下来，调用mutations里的更新token，所以需要commit函数。
+        // 然后再从云端获取用户信息，这里调用actions里面的getinfo，所以需要dispatch函数，传入两个值：一个是成功之后的回调函数，一个是失败之后的回调函数
+        if(jwt_token) {
+            store.commit("updateToken", jwt_token);
+            store.dispatch("getinfo", {
+                success() {
+                    router.push({ name:"home" });
+                    // 拉取完信息了，所以拉取信息标志置为false
+                    store.commit("updatePullingInfo", false);
+                },
+                // token失效或者错误就展示主页
+                error() {
+                    store.commit("updatePullingInfo", false);
+                }
+            })
+        } else {
+            store.commit("updatePullingInfo", false);
+        }
+
         // 如果点击提交了就会触发这个函数,如果想调用store中actions里面的函数需要dispatch
         const login = () => {
             error_message.value = "";
@@ -54,7 +75,7 @@ export default {
                     store.dispatch("getinfo", {
                         success() {
                             router.push({ name:'home' });
-                            console.log(store.state.user);
+                            // console.log(store.state.user);
                         }
                     })
                 },
@@ -68,7 +89,7 @@ export default {
             username,
             password,
             error_message,
-            login,
+            login
         }
     }
 }

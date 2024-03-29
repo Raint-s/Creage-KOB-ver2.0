@@ -1,4 +1,4 @@
-// 需要把用户的信息存到vuex里面，方便多个页面共享状态
+// 需要把用户的信息存到vuex里面，方便多个页面共享状态，相当于是全局变量
 // 这里用到了ajax，需要把其import进来
 import $ from 'jquery'
 
@@ -9,6 +9,7 @@ export default ({
         photo: "",
         token: "",
         is_login: false,
+        pulling_info: true,  //是否正在从云端拉取信息
     },
     getters: {
     },
@@ -29,11 +30,15 @@ export default ({
             state.photo = "";
             state.token = "";
             state.is_login = false;
+        },
+        updatePullingInfo(state, pulling_info) {
+            state.pulling_info = pulling_info;
         }
     },
     // 一般来说修改state的函数都会写在actions里面
     actions: {
         // 写同步函数的话当然不需要经过actions直接在mutations里面写函数也可以，但是异步的话需要放在ajax里面
+        // 异步举例理解：如果像这个函数内部修改中，需要经过云端进行信息拉取，然后拉取完后再执行就是异步操作
         login(context, data) {
             $.ajax({
                 url: "http://127.0.0.1:3000/user/account/token/",
@@ -46,6 +51,7 @@ export default ({
                 // store.dispatch调用login的时候会定义success和error函数
                 success(resp) {
                     if (resp.error_message === "success") {
+                        localStorage.setItem("jwt_token", resp.token);
                         context.commit("updateToken", resp.token);
                         // 成功的时候返回一个回调函数
                         data.success(resp);
@@ -86,6 +92,7 @@ export default ({
             });
         },
         logout(context) {
+            localStorage.removeItem("jwt_token");
             context.commit("logout");
         }
     },
