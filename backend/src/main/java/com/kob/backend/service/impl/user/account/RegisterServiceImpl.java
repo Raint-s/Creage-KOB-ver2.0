@@ -70,7 +70,7 @@ public class RegisterServiceImpl implements RegisterService {
 
 //        注册成功后就可以把用户的密码存入数据库里了，存的时候把密码顺便加密一下
         String encodedPassword = passwordEncoder.encode(password);
-        String photo = "https://www.freeimg.cn/i/2024/03/28/6604e9fceb09e.png";
+        String photo = "https://www.freeimg.cn/i/2024/04/05/6610081b13f8e.png";
         User user = new User(null, username, encodedPassword, photo);
         userMapper.insert(user);
 
