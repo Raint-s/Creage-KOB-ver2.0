@@ -3,6 +3,7 @@ package com.kob.backend.consumer;
 import com.alibaba.fastjson2.JSONObject;
 import com.kob.backend.consumer.utils.Game;
 import com.kob.backend.consumer.utils.JwtAuthentication;
+import com.kob.backend.mapper.RecordMapper;
 import com.kob.backend.mapper.UserMapper;
 import com.kob.backend.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,19 +22,24 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public class WebSocketServer {
 //    定义一个全局变量用以存储所有链接信息，该信息对所有Websocket实例可见
 //    由于每一个实例在每一个线程里面，所以这个公共变量要求是线程安全的，使用线程安全的hash表：id -> 对应实例
-    final private static ConcurrentHashMap<Integer, WebSocketServer> users = new ConcurrentHashMap<>();
-//    这里匹配池也要开成一个线程安全的匹配池
-    final private static CopyOnWriteArraySet<User> matchpool = new CopyOnWriteArraySet<>();
+    final public static ConcurrentHashMap<Integer, WebSocketServer> users = new ConcurrentHashMap<>();
+    final private static CopyOnWriteArraySet<User> matchpool = new CopyOnWriteArraySet<>();  // 这里匹配池也要开成一个线程安全的匹配池
     private User user;
     private Session session = null;
 
-//    标准的Spring中的很多组件都是单例模式，可以直接Autowired注入，这里websocket不是单例模式，这里要定义成一个独一份的变量
-    private static UserMapper userMapper;
+    private static UserMapper userMapper;  // 标准的Spring中的很多组件都是单例模式，可以直接Autowired注入，这里websocket不是单例模式，这里要定义成一个独一份的变量
+    public static RecordMapper recordMapper;
+    private Game game = null;
 
 
     @Autowired
     public void setUserMapper(UserMapper userMapper) {
         WebSocketServer.userMapper = userMapper;
+    }
+
+    @Autowired
+    public void setRecordMapper(RecordMapper recordMapper) {  // 如果写在Game里面的话每开一局游戏都会重新定义一个，没必要
+        WebSocketServer.recordMapper = recordMapper;
     }
 
 //    这里传token，需要从token当中将user_id解析出来
@@ -75,21 +81,35 @@ public class WebSocketServer {
             matchpool.remove(a);
             matchpool.remove(b);
 
-            Game game = new Game(13, 14, 20);
+            Game game = new Game(13, 14, 20, a.getId(), b.getId());  // 两名玩家匹配成功之后就会生成一个新的Game class
             game.createMap();
+            users.get(a.getId()).game = game;
+            users.get(b.getId()).game = game;
+
+            game.start();  // 然后Game之后就会开启一个新的线程，这就是把不同比赛放进不同的线程当中的过程
+
+            JSONObject respGame = new JSONObject();
+            respGame.put("a_id", game.getPlayerA().getId());
+            respGame.put("a_sx", game.getPlayerA().getSx());
+            respGame.put("a_sy", game.getPlayerA().getSy());
+            respGame.put("b_id", game.getPlayerB().getId());
+            respGame.put("b_sx", game.getPlayerB().getSx());
+            respGame.put("b_sy", game.getPlayerB().getSy());
+            respGame.put("map", game.getG());
+
 
             JSONObject respA = new JSONObject();
             respA.put("event", "start-matching");
             respA.put("opponent_username", b.getUsername());
             respA.put("opponent_photo", b.getPhoto());
-            respA.put("gamemap", game.getG());
+            respA.put("game", respGame);
             users.get(a.getId()).sendMessage(respA.toJSONString());
 
             JSONObject respB = new JSONObject();
             respB.put("event", "start-matching");
             respB.put("opponent_username", a.getUsername());
             respB.put("opponent_photo", a.getPhoto());
-            respB.put("gamemap", game.getG());
+            respB.put("game", respGame);
             users.get(b.getId()).sendMessage(respB.toJSONString());
         }
     }
@@ -97,6 +117,14 @@ public class WebSocketServer {
     private void stopMatching() {
         System.out.println("stop matching");
         matchpool.remove(this.user);
+    }
+
+    private void move(int direction) {
+        if(game.getPlayerA().getId().equals(user.getId())) {  //user.getId()是获得当前链接的用户id
+            game.setNextStepA(direction);
+        } else if(game.getPlayerB().getId().equals(user.getId())) {
+            game.setNextStepB(direction);
+        }
     }
 
     @OnMessage
@@ -111,6 +139,8 @@ public class WebSocketServer {
             startMatching();
         } else if("stop-matching".equals(event)) {
             stopMatching();
+        } else if("move".equals(event)) {
+            move(data.getInteger("direction"));
         }
     }
 

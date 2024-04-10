@@ -21,7 +21,10 @@ export default {
 
         // 组件挂载完之后就new GameMap，在一个变量中取值需要.value先
         onMounted(() => {
-            new GameMap(canvas.value.getContext('2d'), parent.value, store)
+            store.commit(
+                "updateGameObject", 
+                new GameMap(canvas.value.getContext('2d'), parent.value, store)
+            );
         });
 
         // 返回之后才可以在上面template里面用
