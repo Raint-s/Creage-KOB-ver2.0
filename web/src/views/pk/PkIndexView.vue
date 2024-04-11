@@ -25,6 +25,8 @@ export default {
         // websocket并没有session的概念，所以通过jwt鉴权时不要放headers里面，直接放在链接里面传给后端
         const socketUrl = `ws://127.0.0.1:3000/websocket/${store.state.user.token}/`;
 
+        store.commit("updateLoser", "none");  // 点开pk/index的时候先Loser状态清空一下
+
         let socket = null;
         // 当当前组件被挂载的时候（即当前页面打开的时候），需要创建连接
         onMounted(() => {
