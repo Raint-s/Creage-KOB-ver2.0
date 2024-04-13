@@ -63,7 +63,7 @@ public class Bot implements com.kob.botrunningsystem.utils.BotInterface {
         int[] dx = {-1, 0, 1, 0}, dy = {0, 1, 0, -1};
         for(int i=0; i<4; i++) {  //判断周围的一个格子能不能走
             int x = aCells.get(aCells.size() - 1).x + dx[i];
-            int y = bCells.get(bCells.size() - 1).y + dy[i];
+            int y = aCells.get(aCells.size() - 1).y + dy[i];
             if(x>=0 && x<13 && y>=0 && y<14 && g[x][y]==0) {
                 return i;
             }

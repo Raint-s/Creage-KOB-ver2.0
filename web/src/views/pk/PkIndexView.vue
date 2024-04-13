@@ -26,6 +26,7 @@ export default {
         const socketUrl = `ws://127.0.0.1:3000/websocket/${store.state.user.token}/`;
 
         store.commit("updateLoser", "none");  // 点开pk/index的时候先Loser状态清空一下
+        store.commit("updateIsRecord", false);
 
         let socket = null;
         // 当当前组件被挂载的时候（即当前页面打开的时候），需要创建连接

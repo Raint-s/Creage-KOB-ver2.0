@@ -33,7 +33,7 @@ public class WebSocketServer {
     private User user;
     private Session session = null;
 
-    private static UserMapper userMapper;  // 标准的Spring中的很多组件都是单例模式，可以直接Autowired注入，这里websocket不是单例模式，这里要定义成一个独一份的变量
+    public  static UserMapper userMapper;  // 标准的Spring中的很多组件都是单例模式，可以直接Autowired注入，这里websocket不是单例模式，这里要定义成一个独一份的变量
     public static RecordMapper recordMapper;
     private static BotMapper botMapper;
     public static RestTemplate restTemplate;  // RestTemplate可以在两个SprintBoot之间通信

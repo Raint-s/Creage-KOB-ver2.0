@@ -118,27 +118,50 @@ export class GameMap extends AcGameObject {
 
 
     add_listening_events(){
-        this.ctx.canvas.focus();  //为了让canvas可以获取用户输入则必须聚焦canvas
+        if(this.store.state.record.is_record) {  // 如果是录像的话就根据历史存储的操作步骤将每一步操作回放出来
+            let k = 0;
+            const a_steps = this.store.state.record.a_steps;
+            const b_steps = this.store.state.record.b_steps;
+            const loser = this.store.state.record.record_loser;
+            const [snake0, snake1] = this.snakes;
+            const interval_id = setInterval(() => {  // 每300ms放回放
+                if(k >= a_steps.length - 1) {  // 最后一步撞了，不需要放出最后一步
+                    if(loser === "all" || loser === "A") {
+                        snake0.status = "die";
+                    }
+                    if(loser === "all" || loser === "B") {
+                        snake1.status = "die";
+                    }
+                    clearInterval(interval_id);
+                } else {
+                    snake0.set_direction(parseInt(a_steps[k]));
+                    snake1.set_direction(parseInt(b_steps[k]));
+                }
+                k++;  // 每次循环完之后 k++
+            }, 300);
+        } else {  // 如果是对战那么逻辑跟之前一样
+            this.ctx.canvas.focus();  //为了让canvas可以获取用户输入则必须聚焦canvas
 
-        // const [snake0, snake1] = this.snakes;
-        this.ctx.canvas.addEventListener("keydown", e => {
-            let d = -1;
-            if(e.key === 'w') d = 0;
-            else if(e.key === 'd') d = 1;
-            else if(e.key === 's') d = 2;
-            else if(e.key === 'a') d = 3;
+            // const [snake0, snake1] = this.snakes;
+            this.ctx.canvas.addEventListener("keydown", e => {
+                let d = -1;
+                if(e.key === 'w') d = 0;
+                else if(e.key === 'd') d = 1;
+                else if(e.key === 's') d = 2;
+                else if(e.key === 'a') d = 3;
 
-            if(d >= 0) {
-                this.store.state.pk.socket.send(JSON.stringify({
-                    event: "move",
-                    direction: d,
-                }));
-            }
-            // else if(e.key === 'ArrowUp') snake1.set_direction(0);
-            // else if(e.key === 'ArrowRight') snake1.set_direction(1);
-            // else if(e.key === 'ArrowDown') snake1.set_direction(2);
-            // else if(e.key === 'ArrowLeft') snake1.set_direction(3);
-        });
+                if(d >= 0) {
+                    this.store.state.pk.socket.send(JSON.stringify({
+                        event: "move",
+                        direction: d,
+                    }));
+                }
+                // else if(e.key === 'ArrowUp') snake1.set_direction(0);
+                // else if(e.key === 'ArrowRight') snake1.set_direction(1);
+                // else if(e.key === 'ArrowDown') snake1.set_direction(2);
+                // else if(e.key === 'ArrowLeft') snake1.set_direction(3);
+            });
+        }
     }
 
     start() {
