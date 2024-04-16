@@ -91,7 +91,7 @@ export default {
         const pull_page = page => {  // 写一个查询page的辅助函数
             current_page = page;  // 更新一下，打开了第i个页面
             $.ajax({
-                url: "http://127.0.0.1:3000/record/getlist/",
+                url: "https://app5298.acapp.acwing.com.cn/api/record/getlist/",
                 data: {
                     page,
                 },

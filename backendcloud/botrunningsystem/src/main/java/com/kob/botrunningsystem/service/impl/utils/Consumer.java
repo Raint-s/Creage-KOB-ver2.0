@@ -1,6 +1,5 @@
 package com.kob.botrunningsystem.service.impl.utils;
 
-import com.kob.botrunningsystem.utils.BotInterface;
 import org.joor.Reflect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -8,7 +7,11 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 @Component
 public class Consumer extends Thread {
@@ -35,7 +38,7 @@ public class Consumer extends Thread {
     }
 
     private String addUid(String code, String uid) {  // 在code中的Bot类名后添加uid
-        int k = code.indexOf(" implements com.kob.botrunningsystem.utils.BotInterface");
+        int k = code.indexOf(" implements java.util.function.Supplier<Integer>");
         return code.substring(0, k) + uid + code.substring(k);
     }
 
@@ -44,12 +47,21 @@ public class Consumer extends Thread {
         UUID uuid = UUID.randomUUID();
         String uid = uuid.toString().substring(0, 8);  // 返回uuid的前八位
 
-        BotInterface botInterface = Reflect.compile(
+        Supplier<Integer> botInterface = Reflect.compile(
                 "com.kob.botrunningsystem.utils.Bot" + uid,  // 可以保证每一次编译的包名不一样
                 addUid(bot.getBotCode(), uid)
         ).create().get();
 
-        Integer direction = botInterface.nextMove(bot.getInput());
+        File file = new File("input.txt");  // 最开始读取输入是通过函数调用，现在将读取输入换成文件流操作，可扩展性更强，并且可以降低耦合性
+        try (PrintWriter fout = new PrintWriter(file)){
+            fout.println(bot.getInput());
+            fout.flush();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+//        Integer direction = botInterface.nextMove(bot.getInput());
+        Integer direction = botInterface.get();  // 改成文件流读取
 
         MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
         data.add("user_id", bot.getUserId().toString());

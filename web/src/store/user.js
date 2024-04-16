@@ -41,7 +41,7 @@ export default ({
         // 异步举例理解：如果像这个函数内部修改中，需要经过云端进行信息拉取，然后拉取完后再执行就是异步操作
         login(context, data) {
             $.ajax({
-                url: "http://127.0.0.1:3000/user/account/token/",
+                url: "https://app5298.acapp.acwing.com.cn/api/user/account/token/",
                 type: "post",
                 data: {
                     username: data.username,
@@ -67,7 +67,7 @@ export default ({
         // 动态显示当前用户信息的辅助函数
         getinfo(context, data) {
             $.ajax({
-                url: "http://127.0.0.1:3000/user/account/info/",
+                url: "https://app5298.acapp.acwing.com.cn/api/user/account/info/",
                 type: "get",
                 headers: {
                     Authorization: "Bearer " + context.state.token,

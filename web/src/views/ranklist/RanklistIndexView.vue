@@ -55,7 +55,7 @@ export default {
         const click_page = page => {
             if(page === -2) page = current_page - 1;
             else if(page === -1) page = current_page + 1;
-            let max_pages = parseInt(Math.ceil(total_users / 3));  // 最大页数必须上取整
+            let max_pages = parseInt(Math.ceil(total_users / 10));  // 最大页数必须上取整
 
             if(page >= 1 && page <= max_pages) {
                 pull_page(page);
@@ -63,7 +63,7 @@ export default {
         }
 
         const update_pages = () => {
-            let max_pages = parseInt(Math.ceil(total_users / 3));  // 最大页数必须上取整
+            let max_pages = parseInt(Math.ceil(total_users / 10));  // 最大页数必须上取整
             let new_pages = [];
             for(let i=current_page-2; i<=current_page+2; i++) {
                 if(i >= 1 && i <= max_pages) {
@@ -79,7 +79,7 @@ export default {
         const pull_page = page => {  // 写一个查询page的辅助函数
             current_page = page;  // 更新一下，打开了第i个页面
             $.ajax({
-                url: "http://127.0.0.1:3000/ranklist/getlist/",
+                url: "https://app5298.acapp.acwing.com.cn/api/ranklist/getlist/",
                 data: {
                     page,
                 },

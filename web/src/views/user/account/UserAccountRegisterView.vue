@@ -46,7 +46,7 @@ export default {
         // 注册是不会修改state的值的，所以该ajax不需要放到store/user.js里面写
         const register = () => {
             $.ajax({
-                url: "http://127.0.0.1:3000/user/account/register/",
+                url: "https://app5298.acapp.acwing.com.cn/api/user/account/register/",
                 type: "post",
                 data: {
                     username: username.value,

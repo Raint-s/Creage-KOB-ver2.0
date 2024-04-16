@@ -153,7 +153,7 @@ export default {
 
         const refresh_bots = () => {
             $.ajax({
-                url: "http://127.0.0.1:3000/user/bot/getlist/",
+                url: "https://app5298.acapp.acwing.com.cn/api/user/bot/getlist/",
                 type: "get",
                 headers: {
                     Authorization: "Bearer " + store.state.user.token,
@@ -170,7 +170,7 @@ export default {
         const add_bot = () => {
             botadd.error_message = "";
             $.ajax({
-                url: "http://127.0.0.1:3000/user/bot/add/",
+                url: "https://app5298.acapp.acwing.com.cn/api/user/bot/add/",
                 type: "post",
                 // 这里数据不用加value，比如不用写成botadd.title.value，因为这里botadd是reactive对象
                 data: {
@@ -206,7 +206,7 @@ export default {
         const update_bot = (bot) => {
             botadd.error_message = "";
             $.ajax({
-                url: "http://127.0.0.1:3000/user/bot/update/",
+                url: "https://app5298.acapp.acwing.com.cn/api/user/bot/update/",
                 type: "post",
                 // 这里数据不用加value，比如不用写成botadd.title.value，因为这里botadd是reactive对象
                 data: {
@@ -237,7 +237,7 @@ export default {
 
         const remove_bot = (bot) => {
             $.ajax({
-                url: "http://127.0.0.1:3000/user/bot/remove/",
+                url: "https://app5298.acapp.acwing.com.cn/api/user/bot/remove/",
                 type: "post",
                 // 这里数据不用加value，比如不用写成botadd.title.value，因为这里botadd是reactive对象
                 data: {

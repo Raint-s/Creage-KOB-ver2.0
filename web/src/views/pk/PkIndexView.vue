@@ -3,6 +3,8 @@
     <PlayGround v-if="$store.state.pk.status === 'playing'" />
     <MatchGround v-if="$store.state.pk.status === 'matching'" />
     <ResultBoard v-if="$store.state.pk.loser != 'none'"/>
+    <div class="user-color" v-if="$store.state.pk.status === 'playing' && parseInt($store.state.user.id) === parseInt($store.state.pk.a_id)">左下角</div>
+    <div class="user-color" v-if="$store.state.pk.status === 'playing' && parseInt($store.state.user.id) === parseInt($store.state.pk.b_id)">右下角</div>
 </template>
 
 <script>
@@ -23,7 +25,7 @@ export default {
     setup() {
         const store = useStore();
         // websocket并没有session的概念，所以通过jwt鉴权时不要放headers里面，直接放在链接里面传给后端
-        const socketUrl = `ws://127.0.0.1:3000/websocket/${store.state.user.token}/`;
+        const socketUrl = `wss://app5298.acapp.acwing.com.cn/websocket/${store.state.user.token}/`;
 
         store.commit("updateLoser", "none");  // 点开pk/index的时候先Loser状态清空一下
         store.commit("updateIsRecord", false);
@@ -94,4 +96,10 @@ export default {
 </script>
 
 <style scoped>
+div.user-color {
+    text-align: center;
+    color: white;
+    font-size: 30px;
+    font-weight: 600;
+}
 </style>
