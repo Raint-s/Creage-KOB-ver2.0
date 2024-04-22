@@ -6,6 +6,9 @@
     <!-- <a class="navbar-brand" href="/">Creage - KOB</a> -->
     <!-- 如果用<a />标签的话每次点完页面之后都会刷新。换成<router-link />标签的话就可以不刷新。这里寻址可以使用router/index.js中的路径别名 -->
     <router-link class="navbar-brand" :to="{name: 'home'}">Creage - KOB</router-link>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
